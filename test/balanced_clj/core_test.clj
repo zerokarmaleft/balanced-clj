@@ -38,3 +38,73 @@
     (let [resp (delete-api-key "AK4b6Elv2iAqJRpu9lD7H53a")]
       (is (not-empty resp))
       (is (= 204 (:status resp))))))
+
+;; ===========================================================================
+;; Customers
+;; ===========================================================================
+(deftest test-create-customer
+  (with-cassette :create-customer do
+    (let [customers    (create-customer {})
+          customer (first (customers "customers"))]
+      (is (not-empty customers))
+      (is (= #{"customers" "links"}
+             (set (keys customers))))
+      (is (not-empty customer))
+      (is (= #{"id" "name" "ssn_last4" "dob_year" "dob_month"
+               "email" "phone" "address"
+               "business_name" "ein" "merchant_status"
+               "meta" "href" "links"
+               "created_at" "updated_at"}
+             (set (keys customer)))))))
+
+(deftest test-fetch-customer
+  (with-cassette :fetch-customer do
+    (let [id        "CU4D1bVOYwIoZiyYRIRNp82c"
+          customers (fetch-customer id)
+          customer  (first (customers "customers"))]
+      (is (not-empty customers))
+      (is (= #{"customers" "links"}
+             (set (keys customers))))
+      (is (not-empty customer))
+      (is (= #{"id" "name" "ssn_last4" "dob_year" "dob_month"
+               "email" "phone" "address"
+               "business_name" "ein" "merchant_status"
+               "meta" "href" "links"
+               "created_at" "updated_at"}
+             (set (keys customer))))
+      (is (= id (customer "id"))))))
+
+(deftest test-list-customers
+  (with-cassette :list-customers do
+    (let [customers (list-customers)]
+      (is (not-empty customers))
+      (is (= #{"customers" "meta" "links"}
+             (set (keys customers))))
+      (is (= 6 (count (customers "customers")))))))
+
+(deftest test-update-customer
+  (with-cassette :update-customer do
+    (let [id        "CU4D1bVOYwIoZiyYRIRNp82c"
+          customers (update-customer id {"address" {"city"  "Tulsa"
+                                                    "state" "OK"}})
+          customer  (first (customers "customers"))]
+      (is (not-empty customers))
+      (is (= #{"customers" "links"}
+             (set (keys customers))))
+      (is (not-empty customer))
+      (is (= #{"id" "name" "ssn_last4" "dob_year" "dob_month"
+               "email" "phone" "address"
+               "business_name" "ein" "merchant_status"
+               "meta" "href" "links"
+               "created_at" "updated_at"}
+             (set (keys customer))))
+      (is (= id (customer "id")))
+      (is (= "Tulsa" (get-in customer ["address" "city"])))
+      (is (= "OK"    (get-in customer ["address" "state"]))))))
+
+(deftest test-delete-customer
+  (with-cassette :delete-customer do
+    (let [id   "CU4D1bVOYwIoZiyYRIRNp82c"
+          resp (delete-customer id)]
+      (is (not-empty resp))
+      (is (= 204 (:status resp))))))
