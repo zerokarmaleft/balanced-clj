@@ -9,51 +9,44 @@
 ;; ===========================================================================
 (defn create-api-key
   []
-  (let [url (str/join "/" [*api-url* "api_keys" ])]
-    (balanced/post url)))
+  (balanced/post [*api-url* "api_keys" ]))
 
 (defn fetch-api-key
   [api-key-id]
-  (let [url (str/join "/" [*api-url* "api_keys" api-key-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "api_keys" api-key-id]))
 
 (defn list-api-keys
   []
-  (let [url (str/join "/" [*api-url* "api_keys"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "api_keys"]))
 
 (defn delete-api-key
   [api-key-id]
-  (let [url (str/join "/" [*api-url* "api_keys" api-key-id])]
-    (balanced/delete url)))
+  (balanced/delete [*api-url* "api_keys" api-key-id]))
 
 ;; ===========================================================================
 ;; Customers
 ;; ===========================================================================
 (defn create-customer
   [customer]
-  (let [url (str/join "/" [*api-url* "customers"])]
-    (balanced/post url :form-params customer)))
+  (balanced/post [*api-url* "customers"]
+                 :form-params customer))
 
 (defn fetch-customer
   [customer-id]
-  (let [url (str/join "/" [*api-url* "customers" customer-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "customers" customer-id]))
 
 (defn list-customers
   []
-  (let [url (str/join "/" [*api-url* "customers"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "customers"]))
 
 (defn update-customer
   [customer-id customer]
-  (let [url (str/join "/" [*api-url* "customers" customer-id])]
-    (balanced/put url :form-params customer)))
+  (balanced/put [*api-url* "customers" customer-id]
+                :form-params customer))
 
 (defn delete-customer
   [customer-id]
-  (let [url (str/join "/" [*api-url* "customers" customer-id])]
-    (balanced/delete url)))
+  (balanced/delete [*api-url* "customers" customer-id]))
 
 ;; ===========================================================================
 ;; Orders
@@ -61,119 +54,110 @@
 (defn create-order
   [customer-id & {:keys [delivery-address description meta]
                   :as   order}]
-  (let [url (str/join "/" [*api-url* "customers" customer-id "orders"])]
-    (balanced/post url :form-params order)))
+  (balanced/post [*api-url* "customers" customer-id "orders"]
+                 :form-params order))
 
 (defn fetch-order
   [order-id]
-  (let [url (str/join "/" [*api-url* "orders" order-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "orders" order-id]))
 
 (defn list-orders
   []
-  (let [url (str/join "/" [*api-url* "orders"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "orders"]))
 
 (defn update-order
   [order-id & {:keys [description meta]
                :as   order}]
-  (let [url (str/join "/" [*api-url* "orders" order-id])]
-    (balanced/put url :form-params order)))
+  (balanced/put [*api-url* "orders" order-id]
+                :form-params order))
 
 ;; ===========================================================================
 ;; Bank Accounts
 ;; ===========================================================================
 (defn fetch-bank-account
   [bank-account-id]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "bank_accounts" bank-account-id]))
 
 (defn list-bank-accounts
   []
-  (let [url (str/join "/" [*api-url* "bank_accounts"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "bank_accounts"]))
 
 (defn update-bank-account
   [bank-account-id bank-account]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id])]
-    (balanced/put url :form-params bank-account)))
+  (balanced/put [*api-url* "bank_accounts" bank-account-id]
+                :form-params bank-account))
 
 (defn delete-bank-account
   [bank-account-id]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id])]
-    (balanced/delete url)))
+  (balanced/delete [*api-url* "bank_accounts" bank-account-id]))
 
 (defn debit-bank-account
-  [bank-account-id & {:keys [amount appears-on-statement-as description meta order source]
-                      :as   debit}]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id "debits"])]
-    (balanced/post url :form-params debit)))
+  [bank-account-id
+   & {:keys [amount appears-on-statement-as description meta order source]
+      :as   debit}]
+  (balanced/post [*api-url* "bank_accounts" bank-account-id "debits"]
+                 :form-params debit))
 
 (defn credit-bank-account
   [bank-account-id
    & {:keys [amount appears-on-statement-as destination order]
       :as   credit}]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id "credits"])]
-    (balanced/put url :form-params credit)))
+  (balanced/put [*api-url* "bank_accounts" bank-account-id "credits"]
+                :form-params credit))
 
 (defn associate-bank-account
-  ""
   [bank-account-id bank-account]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id])]
-    (balanced/put url :form-params bank-account)))
+  (balanced/put [*api-url* "bank_accounts" bank-account-id]
+                :form-params bank-account))
 
 ;; ===========================================================================
 ;; Bank Account Verifications
 ;; ===========================================================================
 (defn create-bank-account-verification
   [bank-account-id]
-  (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id "verifications"])]
-    (balanced/post url)))
+  (balanced/post [*api-url* "bank_accounts" bank-account-id "verifications"]))
 
 (defn fetch-bank-acccount-verification
   [verification-id]
-  (let [url (str/join "/" [*api-url* "verifications" verification-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "verifications" verification-id]))
 
 (defn confirm-bank-account-verification
   [verification-id & {:keys [amount-1 amount-2]
                       :as   amounts}]
-  (let [url (str/join "/" [*api-url* "verifications" verification-id])]
-    (balanced/put url :form-params amounts)))
+  (balanced/put [*api-url* "verifications" verification-id]
+                :form-params amounts))
 
 ;; ===========================================================================
 ;; Cards
 ;; ===========================================================================
 (defn fetch-card
   [card-id]
-  (let [url (str/join "/" [*api-url* "cards" card-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "cards" card-id]))
 
 (defn list-cards
   []
-  (let [url (str/join "/" (*api-url* "cards"))]
-    (balanced/get url)))
+  (balanced/get [*api-url* "cards"]))
 
 (defn update-card
   [card-id & card]
-  (let [url (str/join "/" [*api-url* "cards" card-id])]
-    (balanced/put url :form-params card)))
+  (balanced/put [*api-url* "cards" card-id]
+                :form-params card))
 
 (defn delete-card
   [card-id]
-  (let [url (str/join "/" [*api-url* "cards" card-id])]
-    (balanced/delete url)))
+  (balanced/delete [*api-url* "cards" card-id]))
 
 (defn debit-card
-  [card-id & {:keys [amount appears-on-statement-as description meta order source]
-              :as   debit}]
-  (let [url (str/join "/" [*api-url* "cards" card-id "debits"])]
-    (balanced/post url :form-params debit)))
+  [card-id
+   & {:keys [amount appears-on-statement-as description meta order source]
+      :as   debit}]
+  (balanced/post [*api-url* "cards" card-id "debits"]
+                 :form-params debit))
 
 (defn associate-card
   [card-id card]
-  (let [url (str/join "/" [*api-url* "cards" card-id])]
-    (balanced/put url :form-params card)))
+  (balanced/put [*api-url* "cards" card-id]
+                :form-params card))
 
 ;; ===========================================================================
 ;; Card Holds
@@ -181,78 +165,71 @@
 (defn create-card-hold
   [card-id & {:keys [amount description]
               :as   hold}]
-  (let [url (str/join "/" [*api-url* "cards" card-id "card_holds"])]
-    (balanced/post url :form-params hold)))
+  (balanced/post [*api-url* "cards" card-id "card_holds"]
+                 :form-params hold))
 
 (defn fetch-card-hold
   [card-hold-id]
-  (let [url (str/join "/" [*api-url* "card_holds" card-hold-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "card_holds" card-hold-id]))
 
 (defn list-card-holds
   []
-  (let [url (str/join "/" [*api-url* "card_hods"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "card_hods"]))
 
 (defn update-card-hold
   [card-hold-id & {:keys [description meta]
                    :as   card-hold-attrs}]
-  (let [url (str/join "/" [*api-url* "card_holds" card-hold-id])]
-    (balanced/put url card-hold-attrs)))
+  (balanced/put [*api-url* "card_holds" card-hold-id]
+                :form-params card-hold-attrs))
 
 (defn capture-card-hold
   [card-hold-id
    & {:keys [amount appears-on-statement-as description meta order source]
       :as   debit}]
-  (let [url (str/join "/" [*api-url* "card_holds" card-hold-id "debits"])]
-    (balanced/post url :form-params debit)))
+  (balanced/post [*api-url* "card_holds" card-hold-id "debits"]
+                 :form-params debit))
 
 (defn void-card-hold
   [card-hold-id & {:keys [description meta]
                    :as   card-hold-attrs}]
-  (let [url (str/join "/" [*api-url* "card_holds" card-hold-id])]
-    (balanced/put url :form-params (assoc card-hold-attrs "is_void" "true"))))
+  (balanced/put [*api-url* "card_holds" card-hold-id]
+                :form-params (assoc card-hold-attrs "is_void" "true")))
 
 ;; ===========================================================================
 ;; Debits
 ;; ===========================================================================
 (defn fetch-debit
   [debit-id]
-  (let [url (str/join "/" [*api-url* "debits" debit-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "debits" debit-id]))
 
 (defn list-debits
   []
-  (let [url (str/join "/" [*api-url* "debits"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "debits"]))
 
 (defn update-debit
   [debit-id & {:keys [description meta]
                :as   debit-attrs}]
-  (let [url (str/join "/" [*api-url* "debits" debit-id])]
-    (balanced/put url :form-params debit-attrs)))
+  (balanced/put [*api-url* "debits" debit-id]
+                :form-params debit-attrs))
 
 ;; ===========================================================================
 ;; Credits
 ;; ===========================================================================
 (defn fetch-credit
   [credit-id]
-  (let [url (str/join "/" [*api-url* "credits" credit-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "credits" credit-id]))
 
 (defn list-credits
   ([]
-    (let [url (str/join "/" [*api-url* "credits"])]
-      (balanced/get url)))
+     (balanced/get [*api-url* "credits"]))
   ([bank-account-id]
-    (let [url (str/join "/" [*api-url* "bank_accounts" bank-account-id "credits"])]
-      (balanced/get url))))
+     (balanced/get [*api-url* "bank_accounts" bank-account-id "credits"])))
 
 (defn update-credit
   [credit-id & {:keys [description meta]
                 :as   credit-attrs}]
-  (let [url (str/join "/" [*api-url* "credits" credit-id])]
-    (balanced/put url :form-params credit-attrs)))
+  (balanced/put [*api-url* "credits" credit-id]
+                :form-params credit-attrs))
 
 ;; ===========================================================================
 ;; Refunds (for Debits)
@@ -260,24 +237,22 @@
 (defn create-refund
   [debit-id & {:keys [amount description meta]
                :as   refund}]
-  (let [url (str/join "/" [*api-url* "debits" debit-id "refunds"])]
-    (balanced/post url :form-params refund)))
+  (balanced/post [*api-url* "debits" debit-id "refunds"]
+                 :form-params refund))
 
 (defn fetch-refund
   [refund-id]
-  (let [url (str/join "/" [*api-url* "refunds" refund-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "refunds" refund-id]))
 
 (defn list-refunds
   []
-  (let [url (str/join "/" [*api-url* "refunds"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "refunds"]))
 
 (defn update-refund
   [refund-id & {:keys [description meta]
                 :as   refund-attrs}]
-  (let [url (str/join "/" [*api-url* "refunds" refund-id])]
-    (balanced/put url :form-params refund-attrs)))
+  (balanced/put [*api-url* "refunds" refund-id]
+                :form-params refund-attrs))
 
 ;; ===========================================================================
 ;; Reversals (for Credits)
@@ -285,37 +260,33 @@
 (defn create-reversal
   [credit-id & {:keys [amount description meta]
                 :as   reversal}]
-  (let [url (str/join "/" [*api-url* "credits" credit-id "reversals"])]
-    (balanced/post url :form-params reversal)))
+  (balanced/post [*api-url* "credits" credit-id "reversals"]
+                 :form-params reversal))
 
 (defn fetch-reversal
   [reversal-id]
-  (let [url (str/join "/" [*api-url* "reversals" reversal-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "reversals" reversal-id]))
 
 (defn list-reversals
   []
-  (let [url (str/join "/" [*api-url* "reversals"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "reversals"]))
 
 (defn update-reversal
   [reversal-id & {:keys [description]
                   :as   reversal-attrs}]
-  (let [url (str/join "/" [*api-url* "reversals" reversal-id])]
-    (balanced/put url :form-params reversal-attrs)))
+  (balanced/put [*api-url* "reversals" reversal-id]
+                :form-params reversal-attrs))
 
 ;; ===========================================================================
 ;; Events
 ;; ===========================================================================
 (defn fetch-event
   [event-id]
-  (let [url (str/join "/" [*api-url* "events" event-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "events" event-id]))
 
 (defn list-events
   []
-  (let [url (str/join "/" [*api-url* "events"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "events"]))
 
 ;; ===========================================================================
 ;; Callbacks (for Events)
@@ -323,20 +294,17 @@
 (defn create-callback
   [& {:keys [url method]
       :as   callback}]
-  (let [url (str/join "/" [*api-url* "callbacks"])]
-    (balanced/post url :form-params callback)))
+  (balanced/post [*api-url* "callbacks"]
+                 :form-params callback))
 
 (defn fetch-callback
   [callback-id]
-  (let [url (str/join "/" [*api-url* "callbacks" callback-id])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "callbacks" callback-id]))
 
 (defn list-callbacks
   []
-  (let [url (str/join "/" [*api-url* "callbacks"])]
-    (balanced/get url)))
+  (balanced/get [*api-url* "callbacks"]))
 
 (defn delete-callback
   [callback-id]
-  (let [url (str/join "/" [*api-url* "callbacks" callback-id])]
-    (balanced/delete url)))
+  (balanced/delete [*api-url* "callbacks" callback-id]))
