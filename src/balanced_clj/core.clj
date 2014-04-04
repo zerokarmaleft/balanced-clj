@@ -139,6 +139,11 @@
 ;; ===========================================================================
 ;; Cards
 ;; ===========================================================================
+(defn create-card
+  [card]
+  (balanced/post [*api-url* "cards"]
+                 :form-params card))
+
 (defn fetch-card
   [card-id]
   (balanced/get [*api-url* "cards" card-id]))
@@ -148,7 +153,7 @@
   (balanced/get [*api-url* "cards"]))
 
 (defn update-card
-  [card-id & card]
+  [card-id card]
   (balanced/put [*api-url* "cards" card-id]
                 :form-params card))
 

@@ -276,3 +276,84 @@
                                                              :amount_2 1}))]
       (is (not-empty succeeded))
       (is (= "succeeded" (:verification_status succeeded))))))
+
+;; ===========================================================================
+;; Cards
+;; ===========================================================================
+(def ^:dynamic cards
+  {:success-1          {:brand            "VISA"
+                        :number           "4111111111111111"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "123"}
+   :success-2          {:brand            "MasterCard"
+                        :number           "5105105105105100"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "123"}
+   :success-3          {:brand            "AMEX"
+                        :number           "3411111111111111"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "1234"}
+   :processor-failure  {:brand            "VISA"
+                        :number           "4444444444444448"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "123"}
+   :tokenization-error {:brand            "VISA"
+                        :number           "4222222222222220"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "123"}
+   :cvv-match-fail     {:brand            "MasterCard"
+                        :number           "5112000200000002"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "200"}
+   :cvv-unsupported    {:brand            "VISA"
+                        :number           "4457000300000007"
+                        :expiration_month 1
+                        :expiration_year  2099
+                        :cvv              "901"}})
+
+(deftest test-create-card
+  (with-cassette :create-card do
+    (let [[card _] (:cards (create-card (:success-1 cards)))]
+      (is (not-empty card))
+      (is (= #{:address :avs_postal_match :avs_result :avs_street_match
+               :brand :created_at :cvv :cvv_match :cvv_result
+               :expiration_month :expiration_year :fingerprint
+               :href :id :is_verified :links :meta :name :number :updated_at}
+             (set (keys card)))))))
+
+(deftest test-fetch-card
+  (with-cassette :fetch-card do
+    (let [[new-card _] (:cards (create-card (:success-1 cards)))
+          [card _]     (:cards (fetch-card (:id new-card)))]
+      (is (not-empty card))
+      (is (= new-card card)))))
+
+(deftest test-list-cards
+  (with-cassette :list-cards do
+    (let [[cards _] (:cards (list-cards))]
+      (is (not-empty cards))
+      (is (= 20 (count cards))))))
+
+(deftest test-update-card
+  (with-cassette :update-card do
+    (let [[card _]         (:cards (create-card (:success-1 cards)))
+          attrs            {:meta {:twitter.id         "1234567890"
+                                   :facebook.user_id   "0192837465"
+                                   :my-own-customer-id "12345"}}
+          [updated-card _] (:cards (update-card (:id card) attrs))]
+      (is (not-empty updated-card))
+      (is (= (dissoc (merge card attrs) :updated_at)
+             (dissoc updated-card :updated_at))))))
+
+(deftest test-delete-card
+  (with-cassette :delete-card do
+    (let [[card _] (:cards (create-card (:success-1 cards)))
+          resp     (delete-card (:id card))]
+      (is (not-empty resp))
+      (is (= 204 (:status resp))))))
