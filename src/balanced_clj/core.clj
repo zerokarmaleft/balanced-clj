@@ -169,9 +169,9 @@
                  :form-params debit))
 
 (defn associate-card
-  [card-id card]
+  [card-id customer]
   (balanced/put [*api-url* "cards" card-id]
-                :form-params card))
+                :form-params {:customer (:href customer)}))
 
 ;; ===========================================================================
 ;; Card Holds

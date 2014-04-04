@@ -357,3 +357,12 @@
           resp     (delete-card (:id card))]
       (is (not-empty resp))
       (is (= 204 (:status resp))))))
+
+(deftest test-associate-card
+  (with-cassette :associate-card do
+    (let [[customer _]      (:customers (create-customer))
+          [card _]          (:cards (create-card (:success-1 cards)))
+          [customer-card _] (:cards (associate-card (:id card) customer))]
+      (is (not-empty customer-card))
+      (is (= #{:customer} (set (keys (:links customer-card)))))
+      (is (= (:id customer) (get-in customer-card [:links :customer]))))))
