@@ -7,7 +7,7 @@
                 :url  "https://github.com/zerokarmaleft/balanced-clj/LICENSE"}
 
   :dependencies [[org.clojure/clojure     "1.6.0"]
-                 [clj-http                "0.9.1"]
+                 [clj-http                "0.7.9"]
                  [cheshire                "5.2.0"]
 
                  [com.gfredericks/vcr-clj "0.3.3"]
