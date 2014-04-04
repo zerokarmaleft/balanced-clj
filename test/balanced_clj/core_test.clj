@@ -103,17 +103,20 @@
       (is (= #{:amount :amount_escrowed :currency :delivery_address
                :description
                :id :href :links :meta
-               :created_at :updated_at})))))
+               :created_at :updated_at}
+             (set (keys order)))))))
 
 (deftest test-fetch-order
   (with-cassette :fetch-order do
-    (let [[customer _] (:customers (create-customer))
-          [order _]    (:orders (create-order (:id customer)))]
+    (let [[customer _]  (:customers (create-customer))
+          [new-order _] (:orders (create-order (:id customer)))
+          [order _]     (:orders (fetch-order (:id new-order)))]
       (is (not-empty order))
       (is (= #{:amount :amount_escrowed :currency :delivery_address
                :description
                :id :href :links :meta
-               :created_at :updated_at})))))
+               :created_at :updated_at}))
+      (is (= (:id order) (:id new-order))))))
 
 (deftest test-list-orders
   (with-cassette :list-orders do

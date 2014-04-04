@@ -13,7 +13,8 @@
   (let [url (str/join "/" path)]
     (-> (http/get url
                   {:basic-auth [username password]
-                   :accept     accept-header})
+                   :accept     accept-header
+                   :throw-entire-message? true})
         :body
         (json/parse-string true))))
 
@@ -23,7 +24,8 @@
     (-> (http/post url
                    {:basic-auth  [username password]
                     :accept      accept-header
-                    :form-params form-params})
+                    :form-params form-params
+                    :throw-entire-message? true})
         :body
         (json/parse-string true))))
 
@@ -33,7 +35,8 @@
     (-> (http/put url
                   {:basic-auth  [username password]
                    :accept      accept-header
-                   :form-params form-params})
+                   :form-params form-params
+                   :throw-entire-message? true})
         :body
         (json/parse-string true))))
 
@@ -42,4 +45,5 @@
   (let [url (str/join "/" path)]
     (http/delete url
                  {:basic-auth [username password]
-                  :accept     accept-header})))
+                  :accept     accept-header
+                  :throw-entire-message? true})))
