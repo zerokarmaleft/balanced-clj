@@ -91,3 +91,43 @@
           resp         (delete-customer (:id customer))]
       (is (not-empty resp))
       (is (= 204 (:status resp))))))
+
+;; ===========================================================================
+;; Orders
+;; ===========================================================================
+(deftest test-create-order
+  (with-cassette :create-order do
+    (let [[customer _] (:customers (create-customer))
+          [order _]    (:orders (create-order (:id customer)))]
+      (is (not-empty order))
+      (is (= #{:amount :amount_escrowed :currency :delivery_address
+               :description
+               :id :href :links :meta
+               :created_at :updated_at})))))
+
+(deftest test-fetch-order
+  (with-cassette :fetch-order do
+    (let [[customer _] (:customers (create-customer))
+          [order _]    (:orders (create-order (:id customer)))]
+      (is (not-empty order))
+      (is (= #{:amount :amount_escrowed :currency :delivery_address
+               :description
+               :id :href :links :meta
+               :created_at :updated_at})))))
+
+(deftest test-list-orders
+  (with-cassette :list-orders do
+    (let [orders (list-orders)]
+      (is (not-empty orders))
+      (is (= #{:orders :links :meta}
+             (set (keys orders))))
+      (is (= 7 (count (:orders orders)))))))
+
+(deftest test-update-order
+  (with-cassette :update-order do
+    (let [[customer _]      (:customers (create-customer))
+          [order _]         (:orders (create-order (:id customer)))
+          [updated-order _] (:orders (update-order (:id order)
+                                                   {:description "Order #1"}))]
+      (is (= (:id order) (:id updated-order)))
+      (is (= "Order #1" (:description updated-order))))))
