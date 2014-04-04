@@ -1,6 +1,5 @@
 (ns balanced-clj.core
-  (:require [balanced-clj.client :as balanced]
-            [clojure.string      :as str]))
+  (:require [balanced-clj.client :as balanced]))
 
 (def ^:dynamic *api-url* "https://api.balancedpayments.com")
 
@@ -9,7 +8,7 @@
 ;; ===========================================================================
 (defn create-api-key
   []
-  (balanced/post [*api-url* "api_keys" ]))
+  (balanced/post [*api-url* "api_keys"]))
 
 (defn fetch-api-key
   [api-key-id]
