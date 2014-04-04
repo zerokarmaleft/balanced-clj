@@ -15,7 +15,7 @@
                   {:basic-auth [username password]
                    :accept     accept-header})
         :body
-        json/parse-string)))
+        (json/parse-string true))))
 
 (defn post
   [path & {:keys [form-params]}]
@@ -25,7 +25,7 @@
                     :accept      accept-header
                     :form-params form-params})
         :body
-        json/parse-string)))
+        (json/parse-string true))))
 
 (defn put
   [path & {:keys [form-params]}]
@@ -35,7 +35,7 @@
                    :accept      accept-header
                    :form-params form-params})
         :body
-        json/parse-string)))
+        (json/parse-string true))))
 
 (defn delete
   [path]

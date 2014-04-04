@@ -26,9 +26,11 @@
 ;; Customers
 ;; ===========================================================================
 (defn create-customer
-  [customer]
-  (balanced/post [*api-url* "customers"]
-                 :form-params customer))
+  ([]
+     (create-customer {}))
+  ([customer]
+     (balanced/post [*api-url* "customers"]
+                    :form-params customer)))
 
 (defn fetch-customer
   [customer-id]
@@ -39,9 +41,11 @@
   (balanced/get [*api-url* "customers"]))
 
 (defn update-customer
-  [customer-id customer]
-  (balanced/put [*api-url* "customers" customer-id]
-                :form-params customer))
+  ([customer-id]
+     (update-customer customer-id {}))
+  ([customer-id customer]
+     (balanced/put [*api-url* "customers" customer-id]
+                   :form-params customer)))
 
 (defn delete-customer
   [customer-id]
@@ -51,10 +55,11 @@
 ;; Orders
 ;; ===========================================================================
 (defn create-order
-  [customer-id & {:keys [delivery-address description meta]
-                  :as   order}]
-  (balanced/post [*api-url* "customers" customer-id "orders"]
-                 :form-params order))
+  ([customer-id]
+     (create-order customer-id {}))
+  ([customer-id order]
+     (balanced/post [*api-url* "customers" customer-id "orders"]
+                    :form-params order)))
 
 (defn fetch-order
   [order-id]
@@ -65,10 +70,11 @@
   (balanced/get [*api-url* "orders"]))
 
 (defn update-order
-  [order-id & {:keys [description meta]
-               :as   order}]
-  (balanced/put [*api-url* "orders" order-id]
-                :form-params order))
+  ([order-id]
+     (update-order order-id {}))
+  ([order-id order]
+     (balanced/put [*api-url* "orders" order-id]
+                   :form-params order)))
 
 ;; ===========================================================================
 ;; Bank Accounts
