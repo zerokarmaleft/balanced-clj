@@ -6,9 +6,9 @@
   :license     {:name "MIT License"
                 :url  "https://github.com/zerokarmaleft/balanced-clj/LICENSE"}
 
-  :dependencies [[org.clojure/clojure    "1.5.1"]
-                 [clj-http               "0.7.8"]
-                 [cheshire               "5.2.0"]
+  :dependencies [[org.clojure/clojure     "1.6.0"]
+                 [clj-http                "0.9.1"]
+                 [cheshire                "5.2.0"]
 
                  [com.gfredericks/vcr-clj "0.3.3"]
                  [org.clojure/test.check  "0.5.7"]])
