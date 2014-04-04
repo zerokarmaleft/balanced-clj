@@ -177,10 +177,9 @@
 ;; Card Holds
 ;; ===========================================================================
 (defn create-card-hold
-  [card-id & {:keys [amount description]
-              :as   hold}]
+  [card-id card-hold]
   (balanced/post [*api-url* "cards" card-id "card_holds"]
-                 :form-params hold))
+                 :form-params card-hold))
 
 (defn fetch-card-hold
   [card-hold-id]
@@ -188,13 +187,12 @@
 
 (defn list-card-holds
   []
-  (balanced/get [*api-url* "card_hods"]))
+  (balanced/get [*api-url* "card_holds"]))
 
 (defn update-card-hold
-  [card-hold-id & {:keys [description meta]
-                   :as   card-hold-attrs}]
+  [card-hold-id card-hold]
   (balanced/put [*api-url* "card_holds" card-hold-id]
-                :form-params card-hold-attrs))
+                :form-params card-hold))
 
 (defn capture-card-hold
   [card-hold-id
@@ -204,10 +202,9 @@
                  :form-params debit))
 
 (defn void-card-hold
-  [card-hold-id & {:keys [description meta]
-                   :as   card-hold-attrs}]
+  [card-hold-id]
   (balanced/put [*api-url* "card_holds" card-hold-id]
-                :form-params (assoc card-hold-attrs "is_void" "true")))
+                :form-params {:is_void true}))
 
 ;; ===========================================================================
 ;; Debits

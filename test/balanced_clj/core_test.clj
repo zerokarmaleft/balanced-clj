@@ -366,3 +366,80 @@
       (is (not-empty customer-card))
       (is (= #{:customer} (set (keys (:links customer-card)))))
       (is (= (:id customer) (get-in customer-card [:links :customer]))))))
+
+;; ===========================================================================
+;; Card Holds
+;; ===========================================================================
+(deftest test-create-card-hold
+  (with-cassette :create-card-hold do
+    (let [[card _]    (:cards
+                       (create-card (:success-1 cards)))
+          amount      5000
+          description "Some descriptive text for the debit in the dashboard"
+          [hold _]    (:card_holds
+                       (create-card-hold (:id card)
+                                         {:amount      amount
+                                          :description description}))]
+      (is (not-empty hold))
+      (is (= amount      (:amount hold)))
+      (is (= description (:description hold)))
+      (is (= (:id card)  (get-in hold [:links :card]))))))
+
+(deftest test-fetch-card-hold
+  (with-cassette :fetch-card-hold do
+    (let [[card _]     (:cards
+                        (create-card (:success-1 cards)))
+          amount       5000
+          description  "Some descriptive text for the debit in the dashboard"
+          [new-hold _] (:card_holds
+                        (create-card-hold (:id card)
+                                          {:amount      amount
+                                           :description description}))
+          [hold _]     (:card_holds
+                        (fetch-card-hold (:id new-hold)))]
+      (is (not-empty hold))
+      (is (= new-hold hold)))))
+
+(deftest test-list-card-holds
+  (with-cassette :list-card-holds do
+    (let [[card _] (:cards
+                    (create-card (:success-1 cards)))
+          [hold _] (:card_holds
+                    (create-card-hold (:id card)
+                                      {:amount      1
+                                       :description "Just a buck"}))
+          holds    (:card_holds (list-card-holds))]
+      (is (not-empty holds))
+      (is (> (count holds) 0))
+      (is (some #{hold} holds)))))
+
+(deftest test-update-card-hold
+  (with-cassette :update-card-hold do
+    (let [[card _]     (:cards
+                        (create-card (:success-1 cards)))
+          description  "old description"
+          [new-hold _] (:card_holds
+                        (create-card-hold (:id card)
+                                          {:amount      5000
+                                           :description description}))
+          attrs        {:description "update this description"
+                        :meta        {:holding.for    "user1"
+                                      :meaningful.key "some.value"}}
+          [hold _]     (:card_holds
+                        (update-card-hold (:id new-hold) attrs))]
+      (is (not-empty hold))
+      (is (= (dissoc (merge new-hold attrs) :updated_at)
+             (dissoc hold :updated_at))))))
+
+;; TODO test-capture-card-hold
+
+(deftest test-void-card-hold
+  (with-cassette :void-card-hold do
+    (let [[card _]     (:cards
+                        (create-card (:success-1 cards)))
+          [new-hold _] (:card_holds
+                        (create-card-hold (:id card) {:amount 5000}))
+          [hold _]     (:card_holds
+                        (void-card-hold (:id new-hold)))]
+      (is (not-empty hold))
+      (is (not-empty (:voided_at hold))))))
