@@ -237,3 +237,42 @@
       (is (= #{:bank_account_verification :customer}
              (set (keys (:links customer-account)))))
       (is (= (:id customer) (get-in customer-account [:links :customer]))))))
+
+;; ===========================================================================
+;; Bank Account Verifications
+;; ===========================================================================
+(deftest test-create-bank-account-verification
+  (with-cassette :create-bank-account-verification do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:pending-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))]
+      (is (not-empty verification))
+      (is (= 0 (:attempts verification)))
+      (is (= 3 (:attempts_remaining verification)))
+      (is (= "pending" (:verification_status verification)))
+      (is (= (:id account) (get-in verification [:links :bank_account]))))))
+
+(deftest test-fetch-bank-account-verification
+  (with-cassette :fetch-bank-account-verification do
+    (let [[account _]          (:bank_accounts
+                                (create-bank-account (:pending-1 bank-accounts)))
+          [new-verification _] (:bank_account_verifications
+                                (create-bank-account-verification (:id account)))
+          [verification _]     (:bank_account_verifications
+                                (fetch-bank-account-verification (:id new-verification)))]
+      (is (not-empty verification))
+      (is (= new-verification verification)))))
+
+(deftest test-confirm-bank-account-verification
+  (with-cassette :confirm-bank-account-verification do
+    (let [[account _]   (:bank_accounts
+                         (create-bank-account (:pending-1 bank-accounts)))
+          [pending _]   (:bank_account_verifications
+                         (create-bank-account-verification (:id account)))
+          [succeeded _] (:bank_account_verifications
+                         (confirm-bank-account-verification (:id pending)
+                                                            {:amount_1 1
+                                                             :amount_2 1}))]
+      (is (not-empty succeeded))
+      (is (= "succeeded" (:verification_status succeeded))))))

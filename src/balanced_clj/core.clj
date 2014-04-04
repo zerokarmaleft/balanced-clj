@@ -127,13 +127,12 @@
   [bank-account-id]
   (balanced/post [*api-url* "bank_accounts" bank-account-id "verifications"]))
 
-(defn fetch-bank-acccount-verification
+(defn fetch-bank-account-verification
   [verification-id]
   (balanced/get [*api-url* "verifications" verification-id]))
 
 (defn confirm-bank-account-verification
-  [verification-id & {:keys [amount-1 amount-2]
-                      :as   amounts}]
+  [verification-id amounts]
   (balanced/put [*api-url* "verifications" verification-id]
                 :form-params amounts))
 
