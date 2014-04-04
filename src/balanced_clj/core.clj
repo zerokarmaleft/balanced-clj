@@ -79,6 +79,11 @@
 ;; ===========================================================================
 ;; Bank Accounts
 ;; ===========================================================================
+(defn create-bank-account
+  [bank-account]
+  (balanced/post [*api-url* "bank_accounts"]
+                 :form-params bank-account))
+
 (defn fetch-bank-account
   [bank-account-id]
   (balanced/get [*api-url* "bank_accounts" bank-account-id]))
@@ -111,9 +116,9 @@
                 :form-params credit))
 
 (defn associate-bank-account
-  [bank-account-id bank-account]
+  [bank-account-id customer]
   (balanced/put [*api-url* "bank_accounts" bank-account-id]
-                :form-params bank-account))
+                :form-params {:customer (:href customer)}))
 
 ;; ===========================================================================
 ;; Bank Account Verifications
