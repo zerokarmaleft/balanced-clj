@@ -1,5 +1,5 @@
-(ns balanced-clj.core
-  (:require [balanced-clj.client :as balanced]))
+(ns balanced.core
+  (:require [balanced.client :as balanced]))
 
 (def ^:dynamic *api-url* "https://api.balancedpayments.com")
 

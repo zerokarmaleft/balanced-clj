@@ -1,4 +1,4 @@
-(ns balanced-clj.client
+(ns balanced.client
   (:refer-clojure :exclude [get])
   (:require [clojure.string  :as str]
             [clj-http.client :as http]

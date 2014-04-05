@@ -1,4 +1,4 @@
-# balanced-clj
+# Balanced
 
 A Clojure client API library for Balanced Payments.
 

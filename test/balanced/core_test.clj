@@ -1,7 +1,7 @@
-(ns balanced-clj.core-test
+(ns balanced.core-test
   (:require [clojure.test      :refer :all]
             [vcr-clj.clj-http  :refer [with-cassette]]
-            [balanced-clj.core :refer :all]))
+            [balanced.core :refer :all]))
 
 ;; ===========================================================================
 ;; API Keys

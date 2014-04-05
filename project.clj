@@ -1,4 +1,4 @@
-(defproject balanced-clj "0.1.0-SNAPSHOT"
+(defproject balanced "0.1.0-SNAPSHOT"
   :description "Clojure client API library for Balanced Payments"
   
   :url         "https://github.com/zerokarmaleft/balanced-clj"
