@@ -1,7 +1,7 @@
 (ns balanced.core-test
-  (:require [clojure.test      :refer :all]
-            [vcr-clj.clj-http  :refer [with-cassette]]
-            [balanced.core :refer :all]))
+  (:require [clojure.test     :refer :all]
+            [vcr-clj.clj-http :refer [with-cassette]]
+            [balanced.core    :refer :all]))
 
 ;; ===========================================================================
 ;; API Keys
@@ -506,7 +506,7 @@
                      :description             "Some descriptive text for the debit in the dashboard"}
           [debit _] (:debits
                      (debit-card (:id card) attrs))
-          debits        (:debits (list-debits))]
+          debits    (:debits (list-debits))]
       (is (not-empty debits))
       (is (> (count debits) 0))
       (is (some #{debit} debits)))))
