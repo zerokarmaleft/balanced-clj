@@ -102,9 +102,7 @@
   (balanced/delete [*api-url* "bank_accounts" bank-account-id]))
 
 (defn debit-bank-account
-  [bank-account-id
-   & {:keys [amount appears-on-statement-as description meta order source]
-      :as   debit}]
+  [bank-account-id debit]
   (balanced/post [*api-url* "bank_accounts" bank-account-id "debits"]
                  :form-params debit))
 
@@ -162,9 +160,7 @@
   (balanced/delete [*api-url* "cards" card-id]))
 
 (defn debit-card
-  [card-id
-   & {:keys [amount appears-on-statement-as description meta order source]
-      :as   debit}]
+  [card-id debit]
   (balanced/post [*api-url* "cards" card-id "debits"]
                  :form-params debit))
 
@@ -218,10 +214,9 @@
   (balanced/get [*api-url* "debits"]))
 
 (defn update-debit
-  [debit-id & {:keys [description meta]
-               :as   debit-attrs}]
+  [debit-id debit]
   (balanced/put [*api-url* "debits" debit-id]
-                :form-params debit-attrs))
+                :form-params debit))
 
 ;; ===========================================================================
 ;; Credits

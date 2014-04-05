@@ -225,6 +225,30 @@
       (is (not-empty resp))
       (is (= 204 (:status resp))))))
 
+(deftest test-debit-bank-account
+  (with-cassette :debit-bank-account do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:succeeded-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))
+          [success _]      (:bank_account_verifications
+                            (confirm-bank-account-verification (:id verification)
+                                                               {:amount_1 1
+                                                                :amount_2 1}))
+          attrs            {:amount                  5000
+                            :appears_on_statement_as "Statement text"
+                            :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _]        (:debits
+                            (debit-bank-account (:id account) attrs))]
+      (is (not-empty debit))
+      (is (= #{:amount :appears_on_statement_as :created_at :currency
+               :description :failure_reason :failure_reason_code :href :id
+               :links :meta :status :transaction_number :updated_at}
+             (set (keys debit))))
+      (is (= (:amount attrs)                 (:amount debit)))
+      (is (= (:appears_on_statement_as attrs (str "BAL*" (:appears_on_statement_as debit)))))
+      (is (= (:description attrs             (:description debit)))))))
+
 (deftest test-associate-bank-account
   (with-cassette :associate-bank-account do
     (let [[customer _]         (:customers
@@ -358,6 +382,22 @@
       (is (not-empty resp))
       (is (= 204 (:status resp))))))
 
+(deftest test-debit-card
+  (with-cassette :debit-card do
+    (let [[card _]  (:cards (create-card (:success-1 cards)))
+          attrs     {:amount                  5000
+                     :appears_on_statement_as "Statement text"
+                     :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _] (:debits (debit-card (:id card) attrs))]
+      (is (not-empty debit))
+      (is (= #{:amount :appears_on_statement_as :created_at :currency
+               :description :failure_reason :failure_reason_code :href :id
+               :links :meta :status :transaction_number :updated_at}
+             (set (keys debit))))
+      (is (= (:amount attrs)                 (:amount debit)))
+      (is (= (:appears_on_statement_as attrs (str "BAL*" (:appears_on_statement_as debit)))))
+      (is (= (:description attrs             (:description debit)))))))
+
 (deftest test-associate-card
   (with-cassette :associate-card do
     (let [[customer _]      (:customers (create-customer))
@@ -443,3 +483,47 @@
                         (void-card-hold (:id new-hold)))]
       (is (not-empty hold))
       (is (not-empty (:voided_at hold))))))
+
+;; ===========================================================================
+;; Debits
+;; ===========================================================================
+(deftest test-fetch-debit
+  (with-cassette :fetch-debit do
+    (let [[card _]      (:cards (create-card (:success-1 cards)))
+          attrs         {:amount                  5000
+                         :appears_on_statement_as "Statement text"
+                         :description             "Some descriptive text for the debit in the dashboard"}
+          [new-debit _] (:debits (debit-card (:id card) attrs))
+          [debit _]     (:debits (fetch-debit (:id new-debit)))]
+      (is (not-empty debit))
+      (is (= debit new-debit)))))
+
+(deftest test-list-debits
+  (with-cassette :list-debits do
+    (let [[card _]  (:cards (create-card (:success-1 cards)))
+          attrs     {:amount                  5000
+                     :appears_on_statement_as "Statement text"
+                     :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _] (:debits
+                     (debit-card (:id card) attrs))
+          debits        (:debits (list-debits))]
+      (is (not-empty debits))
+      (is (> (count debits) 0))
+      (is (some #{debit} debits)))))
+
+(deftest test-update-debit
+  (with-cassette :update-debit do
+    (let [[card _]      (:cards (create-card (:success-1 cards)))
+          attrs         {:amount                  5000
+                         :appears_on_statement_as "Statement text"
+                         :description             "Some descriptive text for the debit in the dashboard"}
+          [old-debit _] (:debits
+                         (debit-card (:id card) attrs))
+          update-attrs  {:description "New description for debit"
+                         :meta        {:facebook.id "1234567890"
+                                       :anykey      "valuegoeshere"}}
+          [debit _]     (:debits
+                         (update-debit (:id old-debit) update-attrs))]
+      (is (not-empty debit))
+      (is (= (dissoc (merge old-debit update-attrs) :updated_at)
+             (dissoc debit :updated_at))))))
