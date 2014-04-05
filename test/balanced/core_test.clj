@@ -394,9 +394,12 @@
                :description :failure_reason :failure_reason_code :href :id
                :links :meta :status :transaction_number :updated_at}
              (set (keys debit))))
-      (is (= (:amount attrs)                 (:amount debit)))
-      (is (= (:appears_on_statement_as attrs (str "BAL*" (:appears_on_statement_as debit)))))
-      (is (= (:description attrs             (:description debit)))))))
+      (is (= (:amount attrs)
+             (:amount debit)))
+      (is (= (str "BAL*" (:appears_on_statement_as attrs))
+             (:appears_on_statement_as debit)))
+      (is (= (:description attrs)
+             (:description debit))))))
 
 (deftest test-associate-card
   (with-cassette :associate-card do
