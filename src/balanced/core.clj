@@ -298,10 +298,11 @@
 ;; Callbacks (for Events)
 ;; ===========================================================================
 (defn create-callback
-  [& {:keys [url method]
-      :as   callback}]
+  [callback]
   (balanced/post [*api-url* "callbacks"]
-                 :form-params callback))
+                 :form-params (if-not (:method callback)
+                                (assoc callback :method "put")
+                                callback)))
 
 (defn fetch-callback
   [callback-id]

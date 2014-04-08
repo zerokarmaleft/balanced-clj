@@ -585,10 +585,37 @@
 ;; ===========================================================================
 ;; Callbacks (for Events)
 ;; ===========================================================================
-;; TODO test-create-callback
+(deftest test-create-callback
+  (with-cassette :create-callback do
+    (let [url          "http://www.example.com/create-callback"
+          [callback _] (:callbacks (create-callback {:url url}))]
+      (is (not-empty callback))
+      (is (= #{:href :id :links :method :revision :url}
+             (set (keys callback))))
+      (is (= url (:url callback))))))
 
-;; TODO test-fetch-callback
+(deftest test-fetch-callback
+  (with-cassette :fetch-callback do
+    (let [url              "http://www.example.com/fetch-callback"
+          [new-callback _] (:callbacks (create-callback {:url url}))
+          [callback _]     (:callbacks (fetch-callback (:id new-callback)))]
+      (is (not-empty callback))
+      (is (= #{:href :id :links :method :revision :url}
+             (set (keys callback))))
+      (is (= (:id callback) (:id new-callback))))))
 
-;; TODO test-list-callbacks
+(deftest test-list-callbacks
+  (with-cassette :list-callbacks do
+    (let [callbacks (list-callbacks)]
+      (is (not-empty callbacks))
+      (is (= #{:callbacks :links :meta}
+             (set (keys callbacks))))
+      (is (= (count callbacks) 3)))))
 
-;; TODO test-delete-callback
+(deftest test-delete-callback
+  (with-cassette :delete-callback do
+    (let [url "http://www.example.com/delete-callback"
+          [callback _] (:callbacks (create-callback {:url url}))
+          resp (delete-callback (:id callback))]
+      (is (not-empty resp))
+      (is (= 204 (:status resp))))))
