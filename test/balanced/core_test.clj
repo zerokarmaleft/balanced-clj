@@ -543,13 +543,125 @@
 ;; ===========================================================================
 ;; Refunds (for Debits)
 ;; ===========================================================================
-;; TODO test-create-refund
+(deftest test-create-refund
+  (with-cassette :create-refund do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:succeeded-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))
+          [success _]      (:bank_account_verifications
+                            (confirm-bank-account-verification (:id verification)
+                                                               {:amount_1 1
+                                                                :amount_2 1}))
+          debit-attrs      {:amount                  5000
+                            :appears_on_statement_as "Statement text"
+                            :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _]        (:debits
+                            (debit-bank-account (:id account) debit-attrs))
+          refund-attrs     {:amount      5000
+                            :description "Refund for Order #1111"
+                            :meta        {:merchant.feedback          "positive"
+                                          :user.refund_reason         "not happy with product"
+                                          :fulfillment.item.condition "OK"}}
+          [refund _]       (:refunds
+                            (create-refund (:id debit) refund-attrs))]
+      (is (not-empty refund))
+      (is (= (:amount refund)                                    (:amount refund-attrs)))
+      (is (= (:description refund)                               (:description refund-attrs)))
+      (is (= (get-in refund [:meta :merchant.feedback])          (get-in refund-attrs [:meta :merchant.feedback])))
+      (is (= (get-in refund [:meta :user.refund_reason])         (get-in refund-attrs [:meta :user.refund_reason])))
+      (is (= (get-in refund [:meta :fulfillment.item.condition]) (get-in refund-attrs [:meta :fulfillment.item.condition])))
+      (is (= (get-in refund [:links :debit])                     (:id debit))))))
 
-;; TODO test-fetch-refund
+(deftest test-fetch-refund
+  (with-cassette :fetch-refund do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:succeeded-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))
+          [success _]      (:bank_account_verifications
+                            (confirm-bank-account-verification (:id verification)
+                                                               {:amount_1 1
+                                                                :amount_2 1}))
+          debit-attrs      {:amount                  5000
+                            :appears_on_statement_as "Statement text"
+                            :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _]        (:debits
+                            (debit-bank-account (:id account) debit-attrs))
+          refund-attrs     {:amount      5000
+                            :description "Refund for Order #1111"
+                            :meta        {:merchant.feedback          "positive"
+                                          :user.refund_reason         "not happy with product"
+                                          :fulfillment.item.condition "OK"}}
+          [new-refund _]   (:refunds
+                            (create-refund (:id debit) refund-attrs))
+          [refund _]       (:refunds
+                            (fetch-refund (:id new-refund)))]
+      (is (not-empty refund))
+      (is (= (:id refund) (:id new-refund))))))
 
-;; TODO test-list-refunds
+(deftest test-list-refunds
+  (with-cassette :list-refunds do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:succeeded-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))
+          [success _]      (:bank_account_verifications
+                            (confirm-bank-account-verification (:id verification)
+                                                               {:amount_1 1
+                                                                :amount_2 1}))
+          debit-attrs      {:amount                  5000
+                            :appears_on_statement_as "Statement text"
+                            :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _]        (:debits
+                            (debit-bank-account (:id account) debit-attrs))
+          refund-attrs     {:amount      5000
+                            :description "Refund for Order #1111"
+                            :meta        {:merchant.feedback          "positive"
+                                          :user.refund_reason         "not happy with product"
+                                          :fulfillment.item.condition "OK"}}
+          [refund _]       (:refunds
+                            (create-refund (:id debit) refund-attrs))
+          refunds          (list-refunds)]
+      (is (not-empty refunds))
+      (is (= #{:refunds :links :meta}
+             (set (keys refunds))))
+      (is (> (count refunds) 0)))))
 
-;; TODO test-update-refund
+(deftest test-update-refund
+  (with-cassette :update-refund do
+    (let [[account _]      (:bank_accounts
+                            (create-bank-account (:succeeded-1 bank-accounts)))
+          [verification _] (:bank_account_verifications
+                            (create-bank-account-verification (:id account)))
+          [success _]      (:bank_account_verifications
+                            (confirm-bank-account-verification (:id verification)
+                                                               {:amount_1 1
+                                                                :amount_2 1}))
+          debit-attrs      {:amount                  5000
+                            :appears_on_statement_as "Statement text"
+                            :description             "Some descriptive text for the debit in the dashboard"}
+          [debit _]        (:debits
+                            (debit-bank-account (:id account) debit-attrs))
+          old-refund-attrs {:amount      5000
+                            :description "Refund for Order #1111"
+                            :meta        {:merchant.feedback          "positive"
+                                          :user.refund_reason         "not happy with product"
+                                          :fulfillment.item.condition "OK"}}
+          [old-refund _]   (:refunds
+                            (create-refund (:id debit) old-refund-attrs))
+          refund-attrs     {:description "update this description"
+                            :meta        {:user.refund.count "3"
+                                          :refund.reason     "user not happy with product"
+                                          :user.notes        "very polite on the phone"}}
+          [refund _]       (:refunds
+                            (update-refund (:id old-refund) refund-attrs))]
+      (is (not-empty refund))
+      (is (= (:id refund)                               (:id old-refund)))
+      (is (= (:description refund)                      (:description refund-attrs)))
+      (is (= (get-in refund [:meta :user.refund.count]) (get-in refund-attrs [:meta :user.refund.count])))
+      (is (= (get-in refund [:meta :refund.reason])     (get-in refund-attrs [:meta :refund.reason])))
+      (is (= (get-in refund [:meta :user.notes])        (get-in refund-attrs [:meta :user.notes]))))))
 
 ;; ===========================================================================
 ;; Reversals (for Credits)

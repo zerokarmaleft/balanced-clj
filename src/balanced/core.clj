@@ -241,8 +241,7 @@
 ;; Refunds (for Debits)
 ;; ===========================================================================
 (defn create-refund
-  [debit-id & {:keys [amount description meta]
-               :as   refund}]
+  [debit-id refund]
   (balanced/post [*api-url* "debits" debit-id "refunds"]
                  :form-params refund))
 
@@ -255,10 +254,9 @@
   (balanced/get [*api-url* "refunds"]))
 
 (defn update-refund
-  [refund-id & {:keys [description meta]
-                :as   refund-attrs}]
+  [refund-id refund]
   (balanced/put [*api-url* "refunds" refund-id]
-                :form-params refund-attrs))
+                :form-params refund))
 
 ;; ===========================================================================
 ;; Reversals (for Credits)
