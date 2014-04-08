@@ -530,3 +530,52 @@
       (is (not-empty debit))
       (is (= (dissoc (merge old-debit update-attrs) :updated_at)
              (dissoc debit :updated_at))))))
+
+;; ===========================================================================
+;; Credits
+;; ===========================================================================
+;; TODO test-fetch-credit
+
+;; TODO test-list-credits (for all bank accounts, for a bank account)
+
+;; TODO test-update-credit
+
+;; ===========================================================================
+;; Refunds (for Debits)
+;; ===========================================================================
+;; TODO test-create-refund
+
+;; TODO test-fetch-refund
+
+;; TODO test-list-refunds
+
+;; TODO test-update-refund
+
+;; ===========================================================================
+;; Reversals (for Credits)
+;; ===========================================================================
+;; TODO test-create-reversal
+
+;; TODO test-fetch-reversal
+
+;; TODO test-list-reversals
+
+;; TODO test-update-reversal
+
+;; ===========================================================================
+;; Events
+;; ===========================================================================
+;; TODO test-fetch-event
+
+;; TODO test-list-events
+
+;; ===========================================================================
+;; Callbacks (for Events)
+;; ===========================================================================
+;; TODO test-create-callback
+
+;; TODO test-fetch-callback
+
+;; TODO test-list-callbacks
+
+;; TODO test-delete-callback
