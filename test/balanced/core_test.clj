@@ -565,9 +565,22 @@
 ;; ===========================================================================
 ;; Events
 ;; ===========================================================================
-;; TODO test-fetch-event
+(deftest test-fetch-event
+  (with-cassette :fetch-event do
+    (let [[first-event _] (:events (list-events))
+          [event _]       (:events (fetch-event (:id first-event)))]
+      (is (not-empty event))
+      (is (= #{:callback_statuses :entity :href :id :links :occurred_at :type}
+             (set (keys event))))
+      (is (= (:id first-event) (:id event))))))
 
-;; TODO test-list-events
+(deftest test-list-event
+  (with-cassette :list-events do
+    (let [events (list-events)]
+      (is (not-empty events))
+      (is (= #{:events :links :meta}
+             (set (keys events))))
+      (is (= (count events) 3)))))
 
 ;; ===========================================================================
 ;; Callbacks (for Events)
